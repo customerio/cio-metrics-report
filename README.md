@@ -23,3 +23,17 @@ APITBID = <Your API Triggered Broadcast ID as an INT (no quotes)>
 
 # Sample Email Report HTML
 There is sample HTML code in the `sample_email` folder. The code already contains the trigger variables that the report expects. You can customize the layout as much as you'd like. Line 133 contains a commented section where you can add a second logo. 
+
+# Set up the Broadcast in Customer.io
+### Create the Broadcast
+Copy the ID of the Broadcast after you save it. You'll need it for your `.env` configuration.
+<img width="1190" alt="Screen Shot 2022-04-27 at 11 33 16 AM" src="https://user-images.githubusercontent.com/3914101/165600584-14e2610f-0c62-4050-9511-35a281100c8e.png">
+
+### Define the Recipient Segment
+You will need profiles created in your workspace for everyone you'd like to send the report to. Copy the ID of the segment after you save it. You'll need it for your `.env` configuration.
+<img width="1179" alt="Screen Shot 2022-04-27 at 11 34 48 AM" src="https://user-images.githubusercontent.com/3914101/165600655-0f47eb06-c374-4a2b-8ecd-b2b0ad97ba23.png">
+
+
+
+
+
