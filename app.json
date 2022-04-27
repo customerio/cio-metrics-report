@@ -1,0 +1,7 @@
+{
+    "name": "Customer.io Daily Metrics Report",
+    "description": "A script that generates a report for newsletters and campaigns from your Customer.io workspace.",
+    "repository": "",
+    "logo": "",
+    "keywords": ["python", "customer.io"]
+}
