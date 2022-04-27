@@ -7,6 +7,7 @@
 - A way to schedule the execution of the application. We use Google Cloud Scheduler internally.
 
 # What to expect
+- **Note:** This project is not maintained or supported by Customer.io, and should be used at your own risk. Customer.io assumes no liability for its use in any application.
 - If there have been no newsletter or broadcast email sends in the last 7 days, you won't get a report for the respective entity
 
 # Environment Variables
