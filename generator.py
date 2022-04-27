@@ -1,25 +1,17 @@
 import requests
 import json
-import csv
 import time
 import os
 from datetime import datetime, date, timedelta
-from customerio import APIClient, SendEmailRequest, CustomerIOException
 
-workspaceID = os.environ.get("CustomerWorkspaceID")
-apitbID = os.environ.get("InternalAPITBID")
-InternalSegmentID = os.environ.get("InternalAPITBSegment")
+workspaceID = os.environ.get("workspaceID")
+apitbID = os.environ.get("APITBID")
+segmentID = os.environ.get("APITBSegment")
 
 CIOheaders = {
-    'Authorization': f'Bearer {os.environ.get("CustomerBearer")}',
+    'Authorization': f'Bearer {os.environ.get("AppAPITOKEN")}',
     'Content-Type': 'application/json'
 }
-
-APITBheaders = {
-    'Authorization': f'Bearer {os.environ.get("InternalAPITBBearer")}',
-    'Content-Type': 'application/json'
-}
-
 
 # For newsletter sorting purposes. Extract the time the newsletter was sent.
 def extract_time(to_sort):
@@ -35,11 +27,8 @@ def extract_sent(to_sort):
     except KeyError:
         return 0
 
-def buildReport(request):
-    if request.args:
-        entity = request.args.get('entity', "newsletters")
-    else:
-        entity = 'newsletters'
+def buildReport(req):
+    entity = req.get('entity')
 
     url1 = f'https://beta-api.customer.io/v1/api/{entity}'
     r1 = requests.get(url1, headers=CIOheaders)
@@ -59,7 +48,8 @@ def buildReport(request):
 
             if sent_at is None:
                 continue
-
+            
+            # Set the report window to the number of days since the last send
             seconds_since_send = now-sent_at
             report_window = int(seconds_since_send/86400)
         elif entity == 'campaigns':
@@ -68,10 +58,14 @@ def buildReport(request):
             active = r["active"]
             if active == False:
                 continue
+            
+            # Set the report window to last 7 days
             report_window = 7
         else:
             continue
-
+        
+        # If the days since last send for campaigns is less than 8, this won't run
+        # Newsletters will always run
         if report_window < 8:
             if entity == 'newsletters':
                 period = 'period=days&steps=2'
@@ -79,7 +73,6 @@ def buildReport(request):
                 period = 'period=days&steps=1'
             r2 = requests.get(('https://beta-api.customer.io/v1/api/%s/%s/metrics?%s' % (entity, r['id'], period)), headers=CIOheaders)
             res2 = r2.json()
-
 
             if entity == 'newsletters':
                 sent_count = res2["metric"]["totals"]["sent"]
@@ -167,7 +160,7 @@ def buildReport(request):
     apitbData = {
         "recipients":
             {"segment":
-                {"id": InternalSegmentID}
+                {"id": segmentID}
             },
         "data":{
             "entity":entity,
@@ -177,7 +170,7 @@ def buildReport(request):
     }
     
     try:
-        r3 = requests.post(url3, headers=APITBheaders, data=json.dumps(apitbData))
+        r3 = requests.post(url3, headers=CIOheaders, data=json.dumps(apitbData))
         
         res3 = r3.json()
         # print(json.dumps(res3,indent=4))
